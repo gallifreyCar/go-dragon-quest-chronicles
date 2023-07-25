@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/eiannone/keyboard"
+	"github.com/gallifreyCar/go-dragon-quest-chronicles/hero"
 	"time"
 )
 
@@ -59,32 +60,48 @@ func printGameMap(gameMap [][]string) {
 
 func main() {
 
-	q := quest{0, 0}
-	initGameMap(gameMap)
-
-	// 启动键盘监听s
+	//q := quest{0, 0}
+	//initGameMap(gameMap)
+	//
+	//// 启动键盘监听s
+	//err := keyboard.Open()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//defer keyboard.Close()
+	//
+	//for {
+	//	println("x: ", q.dx, " y: ", q.dy)
+	//	printGameMap(gameMap)
+	//	initGameMap(gameMap)
+	//
+	//	r, key, err := keyboard.GetKey()
+	//	if r == 'q' {
+	//		break
+	//	}
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//
+	//	q.move(r, key)
+	//
+	//	time.Sleep(100 * time.Millisecond)
+	//	clearScreen()
+	//}
+	fireGuide := hero.Default()
 	err := keyboard.Open()
 	if err != nil {
 		panic(err)
 	}
-	defer keyboard.Close()
-
-	for {
-		println("x: ", q.dx, " y: ", q.dy)
-		printGameMap(gameMap)
-		initGameMap(gameMap)
-
-		r, key, err := keyboard.GetKey()
-		if r == 'q' {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-
-		q.move(r, key)
-
-		time.Sleep(100 * time.Millisecond)
-		clearScreen()
+	a := make(chan int, 10)
+	for i := 0; i < 10; i++ {
+		a <- 1
 	}
+	for {
+
+		go fireGuide.Attack(a)
+		time.Sleep(10 * time.Millisecond)
+
+	}
+
 }
