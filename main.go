@@ -94,10 +94,16 @@ func main() {
 		panic(err)
 	}
 	a := make(chan int, 10)
-	for i := 0; i < 10; i++ {
-		a <- 1
-	}
+
 	for {
+		r, _, _ := keyboard.GetKey()
+		if r == 'q' {
+			println("exit")
+			break
+		}
+		if r == 'a' {
+			a <- 1
+		}
 
 		go fireGuide.Attack(a)
 		time.Sleep(10 * time.Millisecond)
