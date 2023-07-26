@@ -3,6 +3,7 @@ package hero
 import (
 	"fmt"
 	"github.com/gallifreyCar/go-dragon-quest-chronicles/dragon"
+	"math/rand"
 	"time"
 )
 
@@ -38,21 +39,25 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 	x := <-atkSignal
 	dragon.WhoAttack.Lock()
 	if x == 0 {
-
 		return
 	}
-	if dragon.DEF > hero.ATK {
-		hero.HP -= dragon.DEF - hero.ATK
-		fmt.Printf("英雄-%s攻击了恶龙-%s,但是攻击力太低，攻击被反噬，英雄-%sHP减少%d，剩余HP:%d\n", hero.Name, dragon.Name, hero.Name, dragon.DEF-hero.ATK, hero.HP)
+	trulyAtk := hero.ATK + hero.ATK*(rand.Intn(3)-rand.Intn(3)) //攻击力随机波动
+	if trulyAtk < 0 {
+		trulyAtk = hero.ATK
 	}
-	if hero.ATK > dragon.DEF {
-		dragon.HP -= hero.ATK - dragon.DEF
+
+	if dragon.DEF > trulyAtk {
+		hero.HP -= dragon.DEF - trulyAtk
+		fmt.Printf("英雄-%s攻击了恶龙-%s,但是攻击力太低，攻击被反噬，英雄-%sHP减少%d，剩余HP:%d\n", hero.Name, dragon.Name, hero.Name, dragon.DEF-trulyAtk, hero.HP)
+	}
+	if trulyAtk > dragon.DEF {
+		dragon.HP -= trulyAtk - dragon.DEF
 		if dragon.HP <= 0 {
 			dragon.IsDead = true
 		}
-		fmt.Printf("英雄-%-10s攻击了恶龙-%s，成功攻击，恶龙-%-5sHP减少%-2d，剩余HP:%d\n", hero.Name, dragon.Name, dragon.Name, hero.ATK-dragon.DEF, dragon.HP)
+		fmt.Printf("英雄-%-10s攻击了恶龙-%s，成功攻击，恶龙-%-5sHP减少%-2d，剩余HP:%d\n", hero.Name, dragon.Name, dragon.Name, trulyAtk-dragon.DEF, dragon.HP)
 	}
-	if hero.ATK == dragon.DEF {
+	if trulyAtk == dragon.DEF {
 		fmt.Printf("英雄-%s攻击了恶龙-%s,实力相当，无事发生\n", hero.Name, dragon.Name)
 	}
 	time.Sleep(100 * time.Millisecond)

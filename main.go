@@ -22,7 +22,7 @@ func main() {
 	fireGuide := hero.Default("fireGuide")
 	blueBird := hero.Default("BlueBird")
 	pinkRabbit := hero.Default("PinkRabbit")
-	pinkRabbit.ATK = 12
+	pinkRabbit.ATK = 5
 	blueBird.ATK = 15
 	eval := dragon.Default("Eval")
 	err := keyboard.Open()
