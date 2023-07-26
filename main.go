@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/eiannone/keyboard"
+	"github.com/gallifreyCar/go-dragon-quest-chronicles/dragon"
 	"github.com/gallifreyCar/go-dragon-quest-chronicles/hero"
+	"sync"
 	"time"
 )
 
@@ -11,103 +13,33 @@ type quest struct {
 	dx, dy int
 }
 
-var gameMap = make([][]string, 3)
+var m sync.Mutex
 
 func clearScreen() { fmt.Print("\033[H\033[2J") }
 
-func (q *quest) move(r rune, k keyboard.Key) {
-	switch r {
-	case 'a':
-		q.dx--
-		gameMap[1][0] = "<"
-
-	case 'd':
-		q.dx++
-		gameMap[1][2] = ">"
-
-	case 'w':
-		q.dy--
-		gameMap[0][1] = "^"
-
-	case 's':
-		q.dy++
-		gameMap[2][1] = "v"
-
-	}
-
-}
-
-func initGameMap(gameMap [][]string) {
-	for i := range gameMap {
-		gameMap[i] = make([]string, 3)
-	}
-
-	for i := range gameMap {
-		for j := range gameMap[i] {
-			gameMap[i][j] = "*"
-		}
-	}
-}
-
-func printGameMap(gameMap [][]string) {
-	for i := range gameMap {
-		for j := range gameMap[i] {
-			fmt.Print(gameMap[i][j])
-		}
-		fmt.Println()
-	}
-}
-
 func main() {
 
-	//q := quest{0, 0}
-	//initGameMap(gameMap)
-	//
-	//// 启动键盘监听s
-	//err := keyboard.Open()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer keyboard.Close()
-	//
-	//for {
-	//	println("x: ", q.dx, " y: ", q.dy)
-	//	printGameMap(gameMap)
-	//	initGameMap(gameMap)
-	//
-	//	r, key, err := keyboard.GetKey()
-	//	if r == 'q' {
-	//		break
-	//	}
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//
-	//	q.move(r, key)
-	//
-	//	time.Sleep(100 * time.Millisecond)
-	//	clearScreen()
-	//}
-	fireGuide := hero.Default()
+	fireGuide := hero.Default("fireGuide")
+	blueBird := hero.Default("BlueBird")
+	blueBird.ATK = 15
+	eval := dragon.Default("Eval")
 	err := keyboard.Open()
 	if err != nil {
 		panic(err)
 	}
 	a := make(chan int, 10)
+	for i := 0; i < 1; i++ {
+		a <- 1
+	}
+	b := make(chan int, 10)
+	for i := 0; i < 5; i++ {
+		b <- 1
+	}
 
 	for {
-		r, _, _ := keyboard.GetKey()
-		if r == 'q' {
-			println("exit")
-			break
-		}
-		if r == 'a' {
-			a <- 1
-		}
-
-		go fireGuide.Attack(a)
-		time.Sleep(10 * time.Millisecond)
-
+		go fireGuide.Attack(a, eval)
+		go blueBird.Attack(b, eval)
+		time.Sleep(1000 * time.Millisecond)
 	}
 
 }
