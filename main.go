@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/eiannone/keyboard"
 	"github.com/gallifreyCar/go-dragon-quest-chronicles/dragon"
 	"github.com/gallifreyCar/go-dragon-quest-chronicles/hero"
 	"sync"
@@ -22,41 +21,44 @@ func main() {
 	fireGuide := hero.Default("fireGuide")
 	blueBird := hero.Default("BlueBird")
 	pinkRabbit := hero.Default("PinkRabbit")
+	waterElement := hero.Default("WaterElement")
 	pinkRabbit.ATK = 5
 	blueBird.ATK = 15
+	waterElement.ATK = 10
 	eval := dragon.Default("Eval")
-	err := keyboard.Open()
-	if err != nil {
-		panic(err)
-	}
+
 	a := make(chan int, 20)
-	for i := 0; i < 7; i++ {
-		a <- 1
-	}
 	b := make(chan int, 10)
-	for i := 0; i < 5; i++ {
-		b <- 1
-	}
 	c := make(chan int, 15)
+	d := make(chan int, 5)
 
+	heroList := []*hero.Hero{fireGuide, blueBird, pinkRabbit, waterElement}
+	//dragonList := []*dragon.Dragon{eval}
+	signalList := []chan int{a, b, c, d}
+	allDead := false
 	for {
-		if eval.IsDead == true {
-			fmt.Println("恶龙死亡，任务完成")
+
+		for _, h := range heroList {
+			if h.IsDead == false {
+				allDead = false
+				break
+			}
+			allDead = true
+		}
+		if allDead == true {
+			fmt.Println("英雄全部阵亡，任务失败")
 			break
 		}
-		if fireGuide.IsDead == true && blueBird.IsDead == true && pinkRabbit.IsDead == true {
-			fmt.Println("英雄全部死亡，任务失败")
+		if eval.IsDead == true {
+			fmt.Println("恶龙阵亡，任务成功")
 			break
 		}
 
-		if fireGuide.IsDead == false {
-			go fireGuide.Attack(a, eval)
-		}
-		if blueBird.IsDead == false {
-			go blueBird.Attack(b, eval)
-		}
-		if pinkRabbit.IsDead == false {
-			go pinkRabbit.Attack(c, eval)
+		for i, h := range heroList {
+			if h.IsDead == false {
+				go h.Attack(signalList[i], eval)
+			}
+
 		}
 
 		time.Sleep(1000 * time.Millisecond)
