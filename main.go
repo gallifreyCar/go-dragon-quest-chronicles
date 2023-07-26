@@ -47,11 +47,20 @@ func main() {
 		}
 		if allDead == true {
 			fmt.Println("英雄全部阵亡，任务失败")
-
 			break
 		}
 		if eval.IsDead == true {
+			fmt.Println("--------------------------")
 			fmt.Println("恶龙阵亡，任务成功")
+			for _, h := range heroList {
+				if h.IsDead == true {
+					fmt.Printf("英雄-%-10s阵亡\n", h.Name)
+				} else {
+					fmt.Printf("英雄-%-10s剩下生命值%d\n", h.Name, h.HP)
+				}
+
+			}
+			fmt.Println("--------------------------")
 			break
 		}
 
