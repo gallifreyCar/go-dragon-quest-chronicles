@@ -26,6 +26,9 @@ func NewHero(hp, mp, atk, def, spd, lvl, exp int) *Hero {
 }
 
 func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
+	if dragon.IsDead == true {
+		return
+	}
 	if hero.isSleep == true {
 		return
 	} else if len(atkSignal) <= 0 {
@@ -44,7 +47,10 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 	}
 	if hero.ATK > dragon.DEF {
 		dragon.HP -= hero.ATK - dragon.DEF
-		fmt.Printf("英雄-%s攻击了恶龙-%s，成功攻击，恶龙-%sHP减少%d，剩余HP:%d\n", hero.Name, dragon.Name, dragon.Name, hero.ATK-dragon.DEF, dragon.HP)
+		if dragon.HP <= 0 {
+			dragon.IsDead = true
+		}
+		fmt.Printf("英雄-%-10s攻击了恶龙-%s，成功攻击，恶龙-%-5sHP减少%-2d，剩余HP:%d\n", hero.Name, dragon.Name, dragon.Name, hero.ATK-dragon.DEF, dragon.HP)
 	}
 	if hero.ATK == dragon.DEF {
 		fmt.Printf("英雄-%s攻击了恶龙-%s,实力相当，无事发生\n", hero.Name, dragon.Name)
@@ -56,7 +62,7 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 
 func (hero *Hero) Sleep(atkSignal chan int) {
 	hero.isSleep = true
-	fmt.Printf("英雄-%s正在休息\n", hero.Name)
+	fmt.Printf("英雄-%-10s正在休息\n", hero.Name)
 	for i := 0; i < 2; i++ {
 		atkSignal <- 1
 	}
