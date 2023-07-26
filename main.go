@@ -20,8 +20,8 @@ func main() {
 
 	fireGuide := hero.Default("fireGuide")
 	blueBird := hero.Default("BlueBird")
-	pinkRabbit := hero.Default("PinkRabbit")
-	waterElement := hero.Default("WaterElement")
+	pinkRabbit := hero.Default("PinkRab")
+	waterElement := hero.Default("WaterEle")
 	pinkRabbit.ATK = 5
 	blueBird.ATK = 15
 	waterElement.ATK = 10
@@ -56,7 +56,7 @@ func main() {
 				if h.IsDead == true {
 					fmt.Printf("英雄-%-10s阵亡\n", h.Name)
 				} else {
-					fmt.Printf("英雄-%-10s剩下生命值%d\n", h.Name, h.HP)
+					fmt.Printf("英雄-%-10s剩下生命值%-2d，累计造成伤害值%-3d，累计攻击次数%-3d\n", h.Name, h.HP, h.Damage, h.AttackTimes)
 				}
 
 			}
