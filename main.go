@@ -37,8 +37,13 @@ func main() {
 	}
 
 	for {
+
 		go fireGuide.Attack(a, eval)
 		go blueBird.Attack(b, eval)
+		if eval.HP <= 0 {
+			fmt.Println("恶龙死亡，任务完成")
+			break
+		}
 		time.Sleep(1000 * time.Millisecond)
 	}
 
