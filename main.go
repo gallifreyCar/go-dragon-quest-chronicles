@@ -47,6 +47,7 @@ func main() {
 		}
 		if allDead == true {
 			fmt.Println("英雄全部阵亡，任务失败")
+
 			break
 		}
 		if eval.IsDead == true {

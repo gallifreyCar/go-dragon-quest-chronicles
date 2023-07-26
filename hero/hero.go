@@ -43,7 +43,8 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 	if x == 0 {
 		return
 	}
-	trulyAtk := hero.ATK + hero.ATK*(rand.Intn(3)-rand.Intn(3)) //攻击力随机波动
+	//攻击力随机波动
+	trulyAtk := hero.ATK - hero.ATK*rand.Intn(2) + hero.ATK*rand.Intn(3)
 	if trulyAtk < 0 {
 		trulyAtk = hero.ATK
 	}
@@ -77,7 +78,8 @@ func (hero *Hero) Sleep(atkSignal chan int) {
 	fmt.Printf("英雄-%-10s正在休息\n", hero.Name)
 	for i := 0; i < cap(atkSignal); i++ {
 		atkSignal <- 1
+		time.Sleep(500 * time.Millisecond)
 	}
-	time.Sleep(2 * time.Second)
+
 	hero.isSleep = false
 }
