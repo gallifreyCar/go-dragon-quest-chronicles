@@ -44,9 +44,20 @@ func main() {
 			fmt.Println("恶龙死亡，任务完成")
 			break
 		}
-		go fireGuide.Attack(a, eval)
-		go blueBird.Attack(b, eval)
-		go pinkRabbit.Attack(c, eval)
+		if fireGuide.IsDead == true && blueBird.IsDead == true && pinkRabbit.IsDead == true {
+			fmt.Println("英雄全部死亡，任务失败")
+			break
+		}
+
+		if fireGuide.IsDead == false {
+			go fireGuide.Attack(a, eval)
+		}
+		if blueBird.IsDead == false {
+			go blueBird.Attack(b, eval)
+		}
+		if pinkRabbit.IsDead == false {
+			go pinkRabbit.Attack(c, eval)
+		}
 
 		time.Sleep(1000 * time.Millisecond)
 	}

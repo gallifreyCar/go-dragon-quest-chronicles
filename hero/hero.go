@@ -12,12 +12,14 @@ type Hero struct {
 	HP, MP, ATK, DEF, SPD, LVL, EXP int
 	Name                            string
 	isSleep                         bool
+	IsDead                          bool
 }
 
 func Default(name string) *Hero {
 	return &Hero{
 		HP: 100, MP: 100, ATK: 20, DEF: 10, SPD: 10, LVL: 1, EXP: 0,
-		Name: name,
+		Name:   name,
+		IsDead: false,
 	}
 }
 func NewHero(hp, mp, atk, def, spd, lvl, exp int) *Hero {
@@ -27,7 +29,7 @@ func NewHero(hp, mp, atk, def, spd, lvl, exp int) *Hero {
 }
 
 func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
-	if dragon.IsDead == true {
+	if dragon.IsDead == true || hero.IsDead == true {
 		return
 	}
 	if hero.isSleep == true {
@@ -48,7 +50,10 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 
 	if dragon.DEF > trulyAtk {
 		hero.HP -= dragon.DEF - trulyAtk
-		fmt.Printf("英雄-%s攻击了恶龙-%s,但是攻击力太低，攻击被反噬，英雄-%sHP减少%d，剩余HP:%d\n", hero.Name, dragon.Name, hero.Name, dragon.DEF-trulyAtk, hero.HP)
+		if hero.HP <= 0 {
+			hero.IsDead = true
+		}
+		fmt.Printf("英雄-%-10s攻击了恶龙-%-5s,但是攻击力太低，攻击被反噬，英雄-%-10sHP减少%-2d，剩余HP:%d\n", hero.Name, dragon.Name, hero.Name, dragon.DEF-trulyAtk, hero.HP)
 	}
 	if trulyAtk > dragon.DEF {
 		dragon.HP -= trulyAtk - dragon.DEF
@@ -58,7 +63,7 @@ func (hero *Hero) Attack(atkSignal chan int, dragon *dragon.Dragon) {
 		fmt.Printf("英雄-%-10s攻击了恶龙-%s，成功攻击，恶龙-%-5sHP减少%-2d，剩余HP:%d\n", hero.Name, dragon.Name, dragon.Name, trulyAtk-dragon.DEF, dragon.HP)
 	}
 	if trulyAtk == dragon.DEF {
-		fmt.Printf("英雄-%s攻击了恶龙-%s,实力相当，无事发生\n", hero.Name, dragon.Name)
+		fmt.Printf("英雄-%-10s攻击了恶龙-%-5s,实力相当，无事发生\n", hero.Name, dragon.Name)
 	}
 	time.Sleep(100 * time.Millisecond)
 	dragon.WhoAttack.Unlock()
