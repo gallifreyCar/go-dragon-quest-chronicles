@@ -18,7 +18,7 @@ func clearScreen() { fmt.Print("\033[H\033[2J") }
 
 func main() {
 
-	fireGuide := hero.Default("fireGuide")
+	fireGuide := hero.Default("FireGuide")
 	blueBird := hero.Default("BlueBird")
 	pinkRabbit := hero.Default("PinkRab")
 	waterElement := hero.Default("WaterEle")
@@ -26,10 +26,11 @@ func main() {
 	blueBird.ATK = 15
 	waterElement.ATK = 10
 	eval := dragon.Default("Eval")
+	eval.HP = 2000
 
-	a := make(chan int, 20)
+	a := make(chan int, 2)
 	b := make(chan int, 10)
-	c := make(chan int, 15)
+	c := make(chan int, 1)
 	d := make(chan int, 5)
 
 	heroList := []*hero.Hero{fireGuide, blueBird, pinkRabbit, waterElement}
@@ -37,7 +38,6 @@ func main() {
 	signalList := []chan int{a, b, c, d}
 	allDead := false
 	for {
-
 		for _, h := range heroList {
 			if h.IsDead == false {
 				allDead = false
@@ -50,28 +50,28 @@ func main() {
 			break
 		}
 		if eval.IsDead == true {
-			fmt.Println("--------------------------")
+			fmt.Println("<<<---------------------------------------------------->>>")
 			fmt.Println("恶龙阵亡，任务成功")
 			for _, h := range heroList {
 				if h.IsDead == true {
-					fmt.Printf("英雄-%-10s阵亡\n", h.Name)
+					fmt.Printf("英雄-%-10s阵亡，累计造成伤害值%-3d，累计攻击次数%-3d\n", h.Name, h.Damage, h.AttackTimes)
 				} else {
-					fmt.Printf("英雄-%-10s剩下生命值%-2d，累计造成伤害值%-3d，累计攻击次数%-3d\n", h.Name, h.HP, h.Damage, h.AttackTimes)
+					fmt.Printf("英雄-%-10s存活，剩下生命值%-2d，累计造成伤害值%-3d，累计攻击次数%-3d\n", h.Name, h.HP, h.Damage, h.AttackTimes)
 				}
 
 			}
-			fmt.Println("--------------------------")
+			fmt.Println("<<<---------------------------------------------------->>>")
 			break
 		}
 
 		for i, h := range heroList {
-			if h.IsDead == false {
+			if h.IsDead == false && eval.IsDead == false {
 				go h.Attack(signalList[i], eval)
 			}
 
 		}
 
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 
 }
